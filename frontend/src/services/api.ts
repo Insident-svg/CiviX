@@ -1,4 +1,4 @@
-const API_URL = (import.meta.env.VITE_API_URL || "https://civixhelpme.netlify.app || http://localhost:5173").replace(/\/$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://e0376d10.civix.pages.dev").replace(/\/$/, "");
 
 export type User = {
   _id?: string; id?: string; name: string; username: string; email?: string; role: "citizen" | "officer" | "admin"; governmentId?: string | null;
