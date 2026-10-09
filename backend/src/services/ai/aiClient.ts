@@ -122,6 +122,21 @@ export async function analyzeGrievance(
     } catch (error) {
       lastError = error;
 
+      if (axios.isAxiosError(error)) {
+        console.error('AI service request failed:', {
+          url,
+          attempt: attempt + 1,
+          status: error.response?.status,
+          message: error.message,
+          response: error.response?.data,
+        });
+      } else {
+        console.error('AI response validation failed:', {
+          attempt: attempt + 1,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+
       if (
         attempt < env.AI_RETRIES
       ) {
@@ -141,10 +156,18 @@ export async function analyzeGrievance(
     // A response was received, so validate it immediately. Validation
     // failures are deterministic and must not be retried as if they were
     // transient network/service failures.
-    validateAIResponse(
-      response.data,
-      input.grievanceId,
-    );
+    try {
+      validateAIResponse(
+        response.data,
+        input.grievanceId,
+      );
+    } catch (error) {
+      console.error('AI response validation failed:', {
+        message: error instanceof Error ? error.message : String(error),
+        response: response.data,
+      });
+      throw error;
+    }
 
     return response.data;
   }
