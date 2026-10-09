@@ -213,7 +213,7 @@ export async function approvePlan(req: AuthRequest, res: Response) {
  const user = requireCoordinator(req);
  // Compare-and-set the plan status to prevent two coordinators approving the same plan concurrently.
  const plan = await EmergencyAllocationPlan.findOneAndUpdate(
-  { _id: req.params.id, status: 'PROPOSED' }, { $set: { status: 'APPROVING' } }, { new: true },
+  { _id: req.params.id, status: 'PROPOSED' }, { $set: { status: 'APPROVING' } }, { returnDocument: 'after' },
  );
  if (!plan) {
   const existing = await EmergencyAllocationPlan.findById(req.params.id);
@@ -227,7 +227,7 @@ export async function approvePlan(req: AuthRequest, res: Response) {
   for (const [resourceId, required] of requiredByResource) {
    const resource = await EmergencyResource.findOneAndUpdate(
     { _id: resourceId, quantityAvailable: { $gte: required }, status: { $in: ['AVAILABLE','PARTIALLY_AVAILABLE'] } },
-    { $inc: { quantityAvailable: -required, quantityReserved: required } }, { new: true },
+    { $inc: { quantityAvailable: -required, quantityReserved: required } }, { returnDocument: 'after' },
    );
    if (!resource) throw new AppError(409, 'RESOURCE_CONFLICT', `Resource ${resourceId} is no longer available in the required quantity. Generate a new plan.`);
    reserved.push({ resourceId, quantity: required });
@@ -240,7 +240,7 @@ export async function approvePlan(req: AuthRequest, res: Response) {
  } catch (error) {
   await EmergencyAssignment.deleteMany({ planId: plan._id });
   for (const item of reserved) {
-   const resource = await EmergencyResource.findByIdAndUpdate(item.resourceId, { $inc: { quantityAvailable: item.quantity, quantityReserved: -item.quantity } }, { new: true });
+   const resource = await EmergencyResource.findByIdAndUpdate(item.resourceId, { $inc: { quantityAvailable: item.quantity, quantityReserved: -item.quantity } }, { returnDocument: 'after' });
    if (resource) { resource.status = resource.quantityAvailable > 0 ? (resource.quantityReserved > 0 ? 'PARTIALLY_AVAILABLE' : 'AVAILABLE') : 'DEPLOYED'; await resource.save(); }
   }
   plan.status = 'PROPOSED'; await plan.save();

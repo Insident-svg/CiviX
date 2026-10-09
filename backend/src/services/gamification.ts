@@ -15,6 +15,11 @@ export const BADGES: BadgeDefinition[] = [
   { id: 'ten-fixes', name: 'Ward Champion', description: 'Help resolve 10 civic issues.', icon: 'award', threshold: 10 },
   { id: 'twenty-five-fixes', name: 'City Guardian', description: 'Help resolve 25 civic issues.', icon: 'shield-check', threshold: 25 },
   { id: 'steady-citizen', name: 'Consistent Contributor', description: 'Earn resolution rewards on 3 consecutive days.', icon: 'flame', threshold: 3, kind: 'streak' },
+  { id: 'light-bringer', name: 'Light Bringer', description: 'Help resolve 3 street-light issues.', icon: 'lightbulb', threshold: 3, category: 'street light' },
+  { id: 'clean-streets', name: 'Clean Streets', description: 'Help resolve 3 sanitation or garbage issues.', icon: 'spray-can', threshold: 3, category: 'sanitation' },
+  { id: 'water-watcher', name: 'Water Watcher', description: 'Help resolve 3 water-supply issues.', icon: 'droplets', threshold: 3, category: 'water' },
+  { id: 'eagle-eye', name: 'Eagle Eye', description: 'Submit 10 civic reports that are verified by the community.', icon: 'eye', threshold: 10, kind: 'reports' },
+  { id: 'closer', name: 'Closer', description: 'Confirm 5 officer resolutions with photo evidence.', icon: 'check-square', threshold: 5, kind: 'resolution-evidence' },
 ] as const;
 
 export const LEVELS = [
@@ -56,25 +61,30 @@ function longestConsecutiveDayRun(dates: Date[]) {
 }
 
 export async function getGamificationProfile(userId: string) {
-  const [user, events, resolvedReports, roadReports] = await Promise.all([
+  const [user, events, resolvedReports, roadReports, lightReports, sanitationReports, waterReports, submittedReports] = await Promise.all([
     User.findById(userId).select('name username role').lean(),
     GamificationEvent.find({ userId }).sort({ awardedAt: 1 }).select('points grievanceId awardedAt').lean(),
     Grievance.countDocuments({ userId, status: 'RESOLVED' }),
     Grievance.countDocuments({ userId, status: 'RESOLVED', category: { $regex: 'road', $options: 'i' } }),
+    Grievance.countDocuments({ userId, status: 'RESOLVED', category: { $regex: 'light', $options: 'i' } }),
+    Grievance.countDocuments({ userId, status: 'RESOLVED', category: { $regex: 'sanitation|garbage|waste', $options: 'i' } }),
+    Grievance.countDocuments({ userId, status: 'RESOLVED', category: { $regex: 'water', $options: 'i' } }),
+    Grievance.countDocuments({ userId }),
   ]);
   if (!user) throw new Error('User not found');
   const points = events.reduce((sum, e) => sum + e.points, 0);
   const streak = longestConsecutiveDayRun(events.map(e => new Date(e.awardedAt)));
   const levelIndex = LEVELS.reduce((idx, level, i) => resolvedReports >= level.minResolved ? i : idx, 0);
   const badges = BADGES.map(badge => {
-    const earned = badge.kind === 'starter' ? resolvedReports === 0 : badge.id === 'pothole-hunter' ? roadReports >= 3 : badge.kind === 'streak' ? streak.longest >= 3 : resolvedReports >= badge.threshold;
+    const categoryCounts: Record<string, number> = { road: roadReports, 'street light': lightReports, sanitation: sanitationReports, water: waterReports };
+    const earned = badge.kind === 'starter' ? resolvedReports === 0 : badge.kind === 'streak' ? streak.longest >= 3 : badge.kind === 'reports' ? submittedReports >= badge.threshold : badge.kind === 'resolution-evidence' ? events.length >= badge.threshold : badge.category ? (categoryCounts[badge.category] ?? 0) >= badge.threshold : resolvedReports >= badge.threshold;
     return { ...badge, earned, earnedAt: earned ? (events[events.length - 1]?.awardedAt ?? null) : null };
   });
   return {
     user: { id: String(userId), name: user.name, username: user.username },
     points, resolvedReports, verifiedResolutionCount: events.length,
     level: LEVELS[levelIndex], nextLevel: LEVELS[levelIndex + 1] ?? null,
-    streak, badges: badges.filter(badge => badge.earned),
+    streak, badges, recentActivity: events.slice(-5).reverse().map(event => ({ points: event.points, awardedAt: event.awardedAt, grievanceId: event.grievanceId, reason: 'Report validated' })),
     currentBadge: [...badges].filter(badge => badge.earned).sort((a, b) => {
       const aProgress = a.kind === 'starter' ? 0 : a.kind === 'streak' ? (streak.longest >= 3 ? 3 : 0) : a.id === 'pothole-hunter' ? roadReports : resolvedReports;
       const bProgress = b.kind === 'starter' ? 0 : b.kind === 'streak' ? (streak.longest >= 3 ? 3 : 0) : b.id === 'pothole-hunter' ? roadReports : resolvedReports;

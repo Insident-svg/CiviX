@@ -18,6 +18,7 @@ import { applySla } from '../services/sla.js';
 import { notify, notifyAdmins } from '../services/notifications.js';
 import { audit } from '../services/audit.js';
 import { awardResolvedGrievance } from '../services/gamification.js';
+import { sendGrievanceWhatsAppUpdate } from '../services/openclawWhatsApp.js';
 
 const createSchema = z.object({
   text: z
@@ -66,6 +67,10 @@ const createSchema = z.object({
     .min(2)
     .max(20)
     .optional(),
+
+  whatsappEnabled: z.boolean().optional().default(false),
+  whatsappNumber: z.string().trim().max(20).optional(),
+  whatsappConsent: z.boolean().optional().default(false),
 }).superRefine((value, ctx) => {
   const hasText = value.text.trim().length >= 3;
   const hasVoice = (value.media ?? []).some((item) => item.type === 'voice');
@@ -75,6 +80,14 @@ const createSchema = z.object({
       path: ['text'],
       message: 'Enter a description or record a voice report',
     });
+  }
+  if (value.whatsappEnabled) {
+    if (!value.whatsappNumber || !/^\+[1-9]\d{7,14}$/.test(value.whatsappNumber)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['whatsappNumber'], message: 'Enter a valid WhatsApp number including country code' });
+    }
+    if (!value.whatsappConsent) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['whatsappConsent'], message: 'Consent is required for WhatsApp notifications' });
+    }
   }
 });
 
@@ -220,7 +233,18 @@ export async function create(
       },
 
       status: 'SUBMITTED',
+      whatsappUpdatesEnabled: Boolean(data.whatsappEnabled && data.whatsappConsent),
+      whatsappConsentAt: data.whatsappEnabled && data.whatsappConsent ? new Date() : undefined,
     });
+
+  if (data.whatsappEnabled && data.whatsappConsent && data.whatsappNumber) {
+    user.set('whatsappNotifications', {
+      enabled: true,
+      phoneNumber: data.whatsappNumber,
+      consentAt: new Date(),
+    });
+    await user.save();
+  }
 
   try {
     const ai =
@@ -365,7 +389,7 @@ export async function create(
       {
         upsert: true,
 
-        new: true,
+        returnDocument: 'after',
 
         setDefaultsOnInsert: true,
       },
@@ -623,10 +647,57 @@ export async function getOne(
     );
   }
 
-  return ok(
-    res,
-    grievance,
-  );
+  // Include the latest officer-submitted resolution evidence in the detail
+  // response so the citizen detail page can display the actual after photo.
+  const resolutionEvidence = await ResolutionEvidence.findOne({
+    grievanceId: grievance._id,
+    afterUrl: { $exists: true, $ne: '' },
+  })
+    .sort({ createdAt: -1 })
+    .select('resolutionDescription afterUrl verified capturedAt createdAt');
+
+  return ok(res, {
+    ...grievance.toObject(),
+    resolutionEvidence: resolutionEvidence ?? null,
+  });
+}
+
+const pocSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  designation: z.string().trim().min(2).max(100),
+  department: z.string().trim().min(2).max(150),
+  officialContact: z.string().trim().min(8).max(20),
+  officeHours: z.string().trim().max(100).optional().default('Monday–Friday, 10 AM–5 PM'),
+  isDemo: z.boolean().optional().default(false),
+});
+
+export async function assignPoc(req: AuthRequest, res: Response) {
+  if (!req.user || req.user.role !== 'officer') {
+    throw new AppError(403, 'OFFICER_ONLY', 'Only the assigned officer can set the person of contact');
+  }
+
+  const grievance = await Grievance.findById(req.params.id);
+  if (!grievance) throw new AppError(404, 'GRIEVANCE_NOT_FOUND', 'Grievance not found');
+
+  const officer = await Officer.findOne({ userId: req.user.id, active: true });
+  if (!officer || !grievance.officerId || String(grievance.officerId) !== String(officer._id)) {
+    throw new AppError(403, 'NOT_ASSIGNED_OFFICER', 'Only the officer assigned to this grievance can set its Person of Contact');
+  }
+
+  const data = pocSchema.parse(req.body);
+  grievance.set('poc', {
+    ...data,
+    assignedBy: req.user.id,
+    assignedAt: new Date(),
+  });
+  await grievance.save();
+
+  // Best-effort local WhatsApp notification; it must not block POC assignment.
+  void sendGrievanceWhatsAppUpdate(grievance._id, 'poc');
+
+  const refreshed = await Grievance.findById(grievance._id)
+    .populate({ path: 'officerId', populate: { path: 'userId', select: 'name username profileImage' } });
+  return ok(res, refreshed);
 }
 
 export async function status(
@@ -783,6 +854,9 @@ export async function status(
     nextStatus;
 
   await grievance.save();
+
+  // Best-effort local WhatsApp notification; it must not block status updates.
+  void sendGrievanceWhatsAppUpdate(grievance._id, 'status', nextStatus);
 
   await audit(
     req.user.id,
@@ -1212,12 +1286,7 @@ export async function analyzePreview(req: AuthRequest, res: Response) {
     });
     return ok(res, ai);
   } catch (error) {
-    console.error('AI preview pipeline failed:', {
-      message: error instanceof Error ? error.message : String(error),
-      cause: error instanceof Error && error.cause instanceof Error
-        ? error.cause.message
-        : undefined,
-    });
+    console.error('AI preview pipeline failed:', error);
     throw new AppError(502, 'AI_SERVICE_UNAVAILABLE', 'AI analysis service is temporarily unavailable. Please try again.');
   }
 }

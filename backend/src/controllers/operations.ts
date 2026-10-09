@@ -249,7 +249,7 @@ export async function moderatePost(req: AuthRequest, res: Response) {
   requireAdmin(req);
   const { moderated } = req.body;
   if (typeof moderated !== 'boolean') throw new AppError(400, 'INVALID_MODERATION_STATE', 'moderated must be boolean');
-  const post = await PublicPost.findByIdAndUpdate(req.params.id, { moderated }, { new: true }).populate('authorId','name username').lean();
+  const post = await PublicPost.findByIdAndUpdate(req.params.id, { moderated }, { returnDocument: 'after' }).populate('authorId','name username').lean();
   if (!post) throw new AppError(404, 'POST_NOT_FOUND', 'Public post not found');
   await audit(req.user!.id, 'admin', moderated ? 'CONTENT_HIDDEN' : 'CONTENT_RESTORED', String(post.grievanceId), undefined, undefined, { postId: String(post._id) });
   return ok(res, post);

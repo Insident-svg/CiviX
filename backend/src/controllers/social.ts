@@ -140,7 +140,7 @@ export async function vote(
       await Vote.findOneAndUpdate(
         { postId: post._id, userId: req.user.id },
         { $set: { type } },
-        { upsert: true, new: true, setDefaultsOnInsert: true },
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
       );
     }
   } catch (error: any) {
@@ -150,7 +150,7 @@ export async function vote(
       await Vote.findOneAndUpdate(
         { postId: post._id, userId: req.user.id },
         { $set: { type } },
-        { new: true },
+        { returnDocument: 'after' },
       );
     } else {
       throw error;

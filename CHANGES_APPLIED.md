@@ -169,3 +169,10 @@ The seed creates/updates the initial administrator as a government account.
 - Acknowledgement and resolution submission now return success when the core database state is saved even if audit/notification side effects fail.
 - Acknowledgement is safe to retry after a lost response.
 - Resolution description submission is idempotent after a saved submission, avoiding duplicate evidence records.
+
+
+## Emergency Response integration into current original project
+- Added role-aware Emergency Response navigation and dashboard, live map, emergency reporting, incident/resource management, allocation plans, assignments, and relief tracking.
+- Reused the original guided report intake and CityMap for citizen emergency reporting.
+- Added emergency API routes and dedicated MongoDB models/controller.
+- Admin workspace does not show the citizen intake card or the demo scenario button.

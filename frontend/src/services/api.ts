@@ -1,4 +1,4 @@
-const API_URL = (import.meta.env.VITE_API_URL || "https://civixhelpme.netlify.app/").replace(/\/$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://civixhelpme.netlify.app || http://localhost:5173").replace(/\/$/, "");
 
 export type User = {
   _id?: string; id?: string; name: string; username: string; email?: string; role: "citizen" | "officer" | "admin"; governmentId?: string | null;
@@ -13,6 +13,10 @@ export type Grievance = {
   createdAt?: string; updatedAt?: string; slaDeadline?: string; masterIncidentId?: string;
   userId?: User | string; departmentId?: {name?:string; code?:string} | string; wardId?: {name?:string; code?:string} | string;
   officerId?: {userId?: User; _id?:string; team?:string} | string;
+  resolutionEvidence?: { _id?:string; resolutionDescription?:string; afterUrl?:string; verified?:boolean; capturedAt?:string; createdAt?:string } | null;
+  poc?: { name?:string; designation?:string; department?:string; officialContact?:string; officeHours?:string; assignedAt?:string; isDemo?:boolean } | null;
+  whatsappUpdatesEnabled?: boolean;
+  whatsappConsentAt?: string;
 };
 
 export type PublicStats = { total:number; resolved:number; resolutionRate:number; satisfaction:number|null; averageResponseHours:number|null };
@@ -74,6 +78,7 @@ export const api = {
     get: (id:string) => request<Grievance>(`/api/grievances/${encodeURIComponent(id)}`),
     dispute: (id:string, reason:string) => request<Grievance>(`/api/grievances/${encodeURIComponent(id)}/dispute`, {method:"POST", body:JSON.stringify({reason})}),
     updateStatus: (id:string,status:string) => request<Grievance>(`/api/grievances/${encodeURIComponent(id)}/status`, {method:"PATCH", body:JSON.stringify({status})}),
+    assignPoc: (id:string,payload:{name:string;designation:string;department:string;officialContact:string;officeHours:string;isDemo?:boolean}) => request<Grievance>(`/api/grievances/${encodeURIComponent(id)}/poc`, {method:"PATCH", body:JSON.stringify(payload)}),
     resolution: (id:string,payload:{resolutionDescription:string}) => request<any>(`/api/grievances/${encodeURIComponent(id)}/resolution`, {method:"POST", body:JSON.stringify(payload)}),
     finalizeResolution: (id:string,payload:{afterUrl:string; latitude?:number; longitude?:number}) => request<any>(`/api/grievances/${encodeURIComponent(id)}/resolution/photo`, {method:"POST", body:JSON.stringify(payload)}),
     verify: (id:string,decision:"approve"|"reopen") => request<Grievance>(`/api/grievances/${encodeURIComponent(id)}/verify`, {method:"PATCH", body:JSON.stringify({decision})}),

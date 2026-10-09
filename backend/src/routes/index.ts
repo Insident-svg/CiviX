@@ -21,7 +21,7 @@ import * as Emergency from '../controllers/emergency.js';
 
 export const router = Router();
 
-// Emergency response and relief coordination. Citizen intake is separate from staff tools.
+// Emergency response and relief coordination.
 router.get('/emergency/overview', auth, Emergency.overview);
 router.post('/emergency/reports', auth, Emergency.createReport);
 router.post('/emergency/reports/:id/link-incident', auth, requireRoles('officer', 'admin'), Emergency.linkReport);
@@ -33,7 +33,6 @@ router.post('/emergency/allocations/optimize', auth, requireRoles('officer', 'ad
 router.post('/emergency/allocations/:id/approve', auth, requireRoles('officer', 'admin'), Emergency.approvePlan);
 router.patch('/emergency/assignments/:id/status', auth, requireRoles('officer', 'admin'), Emergency.updateAssignment);
 router.post('/emergency/relief', auth, requireRoles('officer', 'admin'), Emergency.recordRelief);
-
 
 
 router.get('/public/map/incidents', M.publicIncidents);
@@ -161,6 +160,13 @@ router.patch(
   auth,
   requireRoles('citizen', 'admin'),
   G.verifyResolution,
+);
+
+router.patch(
+  '/grievances/:id/poc',
+  auth,
+  requireRoles('officer'),
+  G.assignPoc,
 );
 
 router.patch(

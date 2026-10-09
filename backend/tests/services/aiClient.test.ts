@@ -41,6 +41,8 @@ beforeEach(() => {
 const VALID_RESPONSE = {
   grievanceId: 'GRV-001',
   language: 'en',
+  title: 'Pothole on MG Road',
+  summary: 'A pothole needs repair.',
   category: 'road',
   severity: 'high',
   departments: ['pwd'],
@@ -70,6 +72,21 @@ describe('analyzeGrievance()', async () => {
     expect(result.category).toBe('road');
     expect(result.severity).toBe('high');
     expect(result.impactScore).toBe(72);
+  });
+
+  it('accepts null transcript when no voice media was provided', async () => {
+    mockedPost.mockResolvedValueOnce({
+      data: { ...VALID_RESPONSE, title: 'Pothole on MG Road', summary: 'A pothole needs repair.', transcript: null },
+    });
+    const result = await analyzeGrievance(INPUT);
+    expect(result.transcript).toBeNull();
+  });
+
+  it('throws when transcript has an invalid non-string value', async () => {
+    mockedPost.mockResolvedValueOnce({
+      data: { ...VALID_RESPONSE, title: 'Pothole on MG Road', summary: 'A pothole needs repair.', transcript: 42 },
+    });
+    await expect(analyzeGrievance(INPUT)).rejects.toThrow('Invalid AI transcript');
   });
 
   it('throws when grievanceId in response does not match input', async () => {

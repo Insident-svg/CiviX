@@ -15,7 +15,7 @@ export interface AIResult {
 
   summary: string;
 
-  transcript?: string;
+  transcript?: string | null;
 
   category: Category;
 
@@ -122,21 +122,6 @@ export async function analyzeGrievance(
     } catch (error) {
       lastError = error;
 
-      if (axios.isAxiosError(error)) {
-        console.error('AI service request failed:', {
-          url,
-          attempt: attempt + 1,
-          status: error.response?.status,
-          message: error.message,
-          response: error.response?.data,
-        });
-      } else {
-        console.error('AI response validation failed:', {
-          attempt: attempt + 1,
-          message: error instanceof Error ? error.message : String(error),
-        });
-      }
-
       if (
         attempt < env.AI_RETRIES
       ) {
@@ -156,18 +141,10 @@ export async function analyzeGrievance(
     // A response was received, so validate it immediately. Validation
     // failures are deterministic and must not be retried as if they were
     // transient network/service failures.
-    try {
-      validateAIResponse(
-        response.data,
-        input.grievanceId,
-      );
-    } catch (error) {
-      console.error('AI response validation failed:', {
-        message: error instanceof Error ? error.message : String(error),
-        response: response.data,
-      });
-      throw error;
-    }
+    validateAIResponse(
+      response.data,
+      input.grievanceId,
+    );
 
     return response.data;
   }
@@ -228,6 +205,8 @@ function validateAIResponse(
     throw new Error('Invalid AI summary');
   }
 
+  // Pydantic serializes Optional[str] as JSON null when no voice transcript
+  // exists. Treat null and an omitted field as equivalent; reject other types.
   if (
     result.transcript !== undefined &&
     result.transcript !== null &&

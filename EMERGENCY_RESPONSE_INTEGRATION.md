@@ -1,14 +1,17 @@
 # CIVIX Emergency Response Integration
 
-This version integrates the Emergency Response tab into the uploaded original CIVIX project, preserving the original grievance, officer-resolution, authentication, profile, analytics, and administration flows.
+This original CIVIX V01 project now includes the Emergency Response workspace.
 
-## Access
-- Citizens: Emergency tab, guided emergency report, live map, and public emergency overview.
-- Officers: Emergency Response, citizen report review, incident creation, resource inventory, demo scenario, allocation proposals, assignments, and relief tracking.
-- Administrators: Emergency Response coordination and oversight. Citizen intake is not embedded in the admin workspace, and the demo scenario button is only shown to officers.
+## Roles
+- Citizens can open Emergency Response and submit a report using the same five-step guided intake, including evidence and map/GPS location.
+- Officers can review incoming reports, create/activate incidents, manage resources, load clearly labelled demo data, optimize allocations, approve plans, update assignments, and record relief.
+- Administrators can oversee incidents, reports, resources, plans, assignments, and relief. The citizen report form and demo-scenario button are not shown in the admin workspace.
 
 ## Backend
-Emergency endpoints are mounted under `/api/emergency`. MongoDB stores incidents, reports, resources, allocation plans, assignments, and relief records. AI triage is optional; rule-assisted triage remains the fallback. Operational dispatch still requires an authorized human approval.
+Emergency API endpoints are registered under `/api/emergency`. Emergency records are stored in MongoDB using dedicated Mongoose models. Optional `GROQ_API_KEY` and `GROQ_MODEL` enable provider-backed triage; the controller has a rule-assisted fallback.
 
-## Setup
-Use the original project instructions in `README.md`. Configure environment files from the included `.env.example` templates. Do not copy secrets into source control.
+## Map
+The live map uses Leaflet loaded from its public CDN and OpenStreetMap tiles. It refreshes every 30 seconds. Coordinates are stored in GeoJSON order `[longitude, latitude]`. Simulated map points are demo data and are not real incident reports.
+
+## Safety
+AI recommendations are advisory. Authorized coordinators must review and approve allocation plans; CIVIX does not automatically dispatch official emergency services. For immediate danger in India, call 112.

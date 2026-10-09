@@ -170,6 +170,23 @@ const grievanceSchema = new Schema(
       index: true,
     },
 
+    // Demo-ready POC details entered by the assigned officer for this grievance.
+    poc: {
+      name: { type: String, trim: true, maxlength: 100 },
+      designation: { type: String, trim: true, maxlength: 100 },
+      department: { type: String, trim: true, maxlength: 150 },
+      officialContact: { type: String, trim: true, maxlength: 20 },
+      officeHours: { type: String, trim: true, maxlength: 100 },
+      assignedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+      assignedAt: { type: Date },
+      isDemo: { type: Boolean, default: false },
+    },
+
+    // Per-grievance consent flag. The recipient phone number is stored privately
+    // on the citizen's User document and is never exposed in grievance responses.
+    whatsappUpdatesEnabled: { type: Boolean, default: false },
+    whatsappConsentAt: { type: Date },
+
     // Set when the assigned officer accepts the grievance. The public feed
     // keeps this timestamp even though the workflow immediately moves to
     // IN_PROGRESS, so citizens can see that the grievance was acknowledged.

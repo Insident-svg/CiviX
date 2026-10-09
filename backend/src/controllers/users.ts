@@ -153,7 +153,7 @@ export async function update(
     req.user.id,
     patch,
     {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     },
   )

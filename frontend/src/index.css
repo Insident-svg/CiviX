@@ -739,7 +739,7 @@ button.table-row:hover { background:var(--surface-2); }
   .mobile-logo .logo b { font-size:20px; }
   .top-actions .user-chip { display:none; }
   .mobile-logout { display:flex; }
-  .bottom-nav { position:fixed; z-index:40; left:0; right:0; bottom:0; height:68px; padding:6px 8px 5px; display:grid; grid-template-columns:repeat(5,1fr); background:var(--surface); border-top:1px solid var(--border); }
+  .bottom-nav { position:fixed; z-index:40; left:0; right:0; bottom:0; height:68px; padding:6px 8px 5px; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); background:var(--surface); border-top:1px solid var(--border); }
   .bottom-nav button { border:0; background:transparent; color:var(--muted); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .bottom-nav small { font-size:10px; font-weight:700; }
   .bottom-nav button.active { color:var(--primary); }
@@ -1503,6 +1503,317 @@ button.table-row:hover { background:var(--surface-2); }
   .evidence-strip { grid-template-columns: minmax(0, 1fr); }
   .evidence-strip img, .evidence-strip video { max-height: 360px; }
 }
+
+
+/* Citizen grievance detail: clearly show the officer's final resolution photo. */
+.resolution-evidence-card { overflow: hidden; }
+.resolution-evidence-card .card-title { align-items: flex-start; gap: 12px; }
+.resolution-evidence-image-link { display: block; margin: 14px 0; border-radius: 12px; overflow: hidden; background: var(--surface-2); }
+.resolution-evidence-image { display: block; width: 100%; max-height: 480px; object-fit: contain; background: #101820; }
+.resolution-evidence-description { padding: 12px 14px; border-radius: 10px; background: var(--surface-2); margin-bottom: 12px; }
+.resolution-evidence-description p { margin: 6px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Civic impact / gamification refresh inspired by the supplied reference screens. */
+.civic-badges-section { margin-top:24px; }
+.civic-section-heading { align-items:flex-start; }
+.civic-section-heading h4 { margin-top:4px; line-height:1.35; }
+.civic-badge-gallery { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.civic-gallery-badge { min-height:132px; align-items:flex-start; flex-direction:column; gap:9px; padding:13px; transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease; }
+.civic-gallery-badge:hover { transform:translateY(-2px); border-color:var(--primary); box-shadow:0 8px 20px rgba(19,48,65,.08); }
+.civic-gallery-badge .civic-earned-badge-icon { width:48px;height:48px;flex-basis:48px;border-radius:50%;align-self:center; }
+.civic-gallery-badge .civic-earned-badge-copy { width:100%; }
+.civic-gallery-badge .civic-earned-badge-copy b { font-size:13px; }
+.civic-gallery-badge .civic-earned-badge-copy small { min-height:32px; }
+.civic-gallery-badge .civic-earned-badge-copy em { margin-top:3px;font-size:10px;font-style:normal;font-weight:750; }
+.civic-gallery-badge.is-locked { color:var(--muted);background:var(--surface);filter:saturate(.25); }
+.civic-gallery-badge.is-locked .civic-earned-badge-icon { background:var(--surface-2,#f3f6f7);opacity:.62; }
+.civic-gallery-badge.is-locked .civic-earned-badge-copy b,.civic-gallery-badge.is-locked .civic-earned-badge-copy small { color:var(--muted); }
+.civic-gallery-badge.is-earned { border-color:rgba(47,105,139,.42);background:var(--surface-2,#f7fafb); }
+.impact-level-card,.impact-community-card,.impact-ledger-card,.impact-challenge-card { margin-top:18px;padding:18px;border:1px solid var(--border);border-radius:14px;background:var(--surface); }
+.impact-level-card .civic-section-heading { margin-bottom:14px; }
+.impact-level-card .civic-section-heading strong { font-size:25px;color:var(--primary);text-align:right; }
+.impact-level-card .civic-section-heading strong small { display:block;font-size:11px;font-weight:600;color:var(--muted); }
+.level-hindi { color:var(--muted);font-size:13px;font-weight:500; }
+.impact-progress { height:10px;overflow:hidden;border-radius:999px;background:var(--surface-2,#edf0f2); }
+.impact-progress span { display:block;height:100%;border-radius:inherit;background:#326b8b;transition:width .3s ease; }
+.impact-progress-labels { display:flex;justify-content:space-between;gap:10px;margin-top:8px;color:var(--muted);font-size:11px; }
+.impact-next-level { display:inline-block;margin-top:12px;padding:5px 9px;border-radius:6px;background:var(--surface-2,#f1f3f4);color:var(--muted); }
+.impact-community-card h4 { margin:8px 0 12px; }
+.impact-people { color:var(--primary);font-size:31px;font-weight:850; }
+.impact-people small { font-size:13px;font-weight:600; }
+.impact-community-card p { margin:3px 0 10px;color:var(--muted);font-weight:650; }
+.impact-estimate-note { display:block;color:var(--muted);font-size:10px;line-height:1.5; }
+.share-impact-button { margin-top:16px;padding:11px 15px;border:0;border-radius:9px;background:#326b8b;color:white;font:inherit;font-weight:750;cursor:pointer; }
+.share-impact-button:hover { filter:brightness(.95); }
+.impact-ledger-row { display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border); }
+.impact-ledger-row:last-child { border-bottom:0; }
+.impact-ledger-row>div { min-width:0;display:flex;flex-direction:column;gap:4px; }
+.impact-ledger-row b { color:var(--text);font-size:13px; }
+.impact-ledger-row small { color:var(--muted);font-size:11px;overflow-wrap:anywhere; }
+.impact-ledger-row>strong { flex-shrink:0;padding:5px 9px;border-radius:7px;background:#e4f4ef;color:#246d5c;font-size:12px; }
+.impact-challenge-card { display:flex;align-items:flex-start;gap:14px;background:linear-gradient(110deg,rgba(245,139,28,.10),rgba(245,139,28,.025)); }
+.challenge-icon { display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:12px;background:rgba(245,139,28,.12);font-size:23px; }
+.challenge-main { flex:1;min-width:0; }
+.challenge-main h4 { margin:4px 0 6px; }
+.challenge-main p { margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5; }
+.challenge-main>small { display:block;margin-top:7px;color:var(--muted);font-size:11px; }
+.challenge-bonus { display:inline-block;margin-left:5px;padding:4px 7px;border-radius:999px;background:#f58b1c;color:#fff;font-size:10px;white-space:nowrap; }
+@media(max-width:760px) { .civic-badge-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:430px) { .civic-badge-gallery { grid-template-columns:1fr; }.civic-gallery-badge { min-height:0;flex-direction:row;align-items:center; }.civic-gallery-badge .civic-earned-badge-icon { align-self:auto; }.civic-gallery-badge .civic-earned-badge-copy small { min-height:0; }.impact-progress-labels { flex-direction:column; } }
+
+
+/* Gamification polish: spacious cards, centered artwork, and accessible hover/focus states. */
+.sidebar { height:100dvh; max-height:100dvh; overflow:hidden; box-sizing:border-box; }
+.sidebar > .logo, .sidebar > .role-label, .sidebar > .btn, .sidebar > .sidebar-bottom { flex-shrink:0; }
+.sidebar nav { flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(160,198,219,.42) transparent; padding:2px 0 10px; }
+.sidebar nav::-webkit-scrollbar { width:5px; }
+.sidebar nav::-webkit-scrollbar-thumb { background:rgba(160,198,219,.42); border-radius:10px; }
+.sidebar-bottom { margin-top:10px; }
+.civic-badge-gallery { gap:14px; }
+.civic-gallery-badge { box-sizing:border-box; min-height:168px; padding:18px 16px 16px; gap:12px; border-radius:15px; box-shadow:0 3px 10px rgba(19,48,65,.035); transform:translateY(0); transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease, background-color .22s ease; }
+.civic-gallery-badge:hover, .civic-gallery-badge:focus-within { transform:translateY(-4px); border-color:rgba(47,105,139,.65); box-shadow:0 12px 25px rgba(19,48,65,.13); }
+.civic-gallery-badge .civic-earned-badge-icon { width:58px; height:58px; flex:0 0 58px; align-self:center; display:flex; align-items:center; justify-content:center; margin:0 auto 1px; padding:7px; box-sizing:border-box; border-radius:15px; overflow:hidden; }
+.civic-gallery-badge .civic-earned-badge-image { width:100%; height:100%; object-fit:contain; object-position:center; display:block; margin:auto; }
+.civic-gallery-badge .civic-earned-badge-copy { width:100%; align-items:flex-start; text-align:left; gap:5px; }
+.civic-gallery-badge .civic-earned-badge-copy b { font-size:14px; line-height:1.35; }
+.civic-gallery-badge .civic-earned-badge-copy small { min-height:36px; line-height:1.45; }
+.civic-gallery-badge .civic-earned-badge-copy em { margin-top:2px; }
+.civic-gallery-badge.is-earned { box-shadow:0 4px 14px rgba(47,105,139,.075); }
+.civic-gallery-badge.is-locked { filter:none; }
+.civic-gallery-badge.is-locked .civic-earned-badge-icon { opacity:.78; }
+.civic-impact-page .civic-impact-card { margin-top:0; }
+@media (prefers-reduced-motion: reduce) { .civic-gallery-badge { transition:none; } .civic-gallery-badge:hover, .civic-gallery-badge:focus-within { transform:none; } }
+@media(max-width:760px) { .sidebar nav { overscroll-behavior:contain; } .civic-gallery-badge { min-height:155px; padding:15px 13px; } .civic-gallery-badge .civic-earned-badge-icon { width:52px;height:52px;flex-basis:52px; } }
+
+/* Profile impact split: keep the profile preview compact and the sidebar Impact page comprehensive. */
+.profile-section-tabs { display:flex; gap:8px; margin:0 0 16px; padding:5px; border:1px solid var(--border); border-radius:12px; background:var(--surface); width:fit-content; max-width:100%; box-sizing:border-box; }
+.profile-section-tabs button { border:0; border-radius:8px; padding:10px 18px; background:transparent; color:var(--muted); font:inherit; font-size:13px; font-weight:750; cursor:pointer; }
+.profile-section-tabs button.active { background:var(--primary); color:#fff; box-shadow:0 3px 9px rgba(19,48,65,.13); }
+.profile-section-tabs button:focus-visible,.profile-upcoming-heading button:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+.profile-grievances-section,.profile-impact-preview { min-width:0; width:100%; box-sizing:border-box; }
+.profile-subsection-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 12px; }
+.profile-subsection-heading h3 { margin:4px 0; font-size:18px; }
+.profile-subsection-heading p { margin:0; color:var(--muted); font-size:13px; }
+.profile-impact-preview { overflow:hidden; }
+.profile-impact-points { flex:0 0 auto; font-size:20px; font-weight:850; color:var(--primary); white-space:nowrap; }
+.profile-impact-points small { font-size:11px; color:var(--muted); }
+.profile-current-badge { display:flex; align-items:center; gap:16px; padding:18px; margin-top:14px; border:1px solid rgba(47,105,139,.38); border-radius:14px; background:var(--surface-2,#f5f8f9); min-width:0; box-sizing:border-box; }
+.profile-current-badge-art { width:74px; height:74px; flex:0 0 74px; display:grid; place-items:center; padding:8px; box-sizing:border-box; border-radius:16px; border:1px solid var(--border); background:var(--surface); }
+.profile-current-badge-art img,.profile-upcoming-art img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; }
+.profile-current-badge h4 { margin:4px 0; font-size:17px; }
+.profile-current-badge p { margin:0 0 8px; color:var(--muted); font-size:13px; line-height:1.5; }
+.badge-status-earned { color:var(--primary); font-size:11px; font-weight:800; }
+.profile-upcoming-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:20px 0 10px; }
+.profile-upcoming-heading h4 { margin:0; }
+.profile-upcoming-heading button { display:inline-flex; align-items:center; gap:5px; border:0; background:transparent; color:var(--primary); font:inherit; font-size:12px; font-weight:750; cursor:pointer; }
+.profile-upcoming-badges { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; min-width:0; }
+.profile-upcoming-badge { display:flex; align-items:flex-start; gap:10px; min-width:0; padding:13px; box-sizing:border-box; border:1px solid var(--border); border-radius:12px; background:var(--surface); transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+.profile-upcoming-badge:hover { transform:translateY(-2px); border-color:rgba(47,105,139,.5); box-shadow:0 8px 18px rgba(19,48,65,.08); }
+.profile-upcoming-art { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; padding:5px; box-sizing:border-box; border-radius:10px; background:var(--surface-2); }
+.profile-upcoming-badge>span:last-child { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.profile-upcoming-badge b { font-size:12px; line-height:1.35; overflow-wrap:anywhere; }
+.profile-upcoming-badge small { color:var(--muted); font-size:11px; line-height:1.4; overflow-wrap:anywhere; }
+.profile-upcoming-badge em { font-size:10px; font-style:normal; font-weight:750; color:var(--muted); }
+/* Prevent badge grids and cards from bleeding past their parent border at any viewport width. */
+.civic-impact-card,.full-civic-impact,.civic-badges-section,.civic-badge-gallery,.civic-gallery-badge { min-width:0; max-width:100%; box-sizing:border-box; }
+.civic-impact-card { overflow:hidden; }
+.civic-badge-gallery { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.civic-gallery-badge { width:100%; max-width:100%; overflow:hidden; overflow-wrap:anywhere; }
+.civic-gallery-badge .civic-earned-badge-copy,.civic-gallery-badge .civic-earned-badge-copy small { min-width:0; overflow-wrap:anywhere; }
+.civic-gallery-badge .civic-earned-badge-copy small { min-height:3em; }
+@media(max-width:900px) { .profile-upcoming-badges { grid-template-columns:repeat(2,minmax(0,1fr)); } .civic-badge-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:560px) { .profile-section-tabs { width:100%; } .profile-section-tabs button { flex:1; padding-inline:10px; } .profile-current-badge { align-items:flex-start; padding:13px; gap:12px; } .profile-current-badge-art { width:58px;height:58px;flex-basis:58px; } .profile-upcoming-badges { grid-template-columns:minmax(0,1fr); } .profile-subsection-heading,.profile-upcoming-heading { align-items:flex-start; flex-direction:column; } .civic-badge-gallery { grid-template-columns:minmax(0,1fr); } }
+
+/* V03 hard fix: give the full Civic Impact parent card real interior space. */
+.civic-impact-page {
+  width: 100%;
+  max-width: 1180px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-left: clamp(16px, 3vw, 36px);
+  padding-right: clamp(16px, 3vw, 36px);
+}
+.civic-impact-card.full-civic-impact {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(18px, 2.2vw, 30px);
+  overflow: visible;
+}
+.civic-impact-card.full-civic-impact > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.civic-impact-card.full-civic-impact .card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.civic-impact-card.full-civic-impact .profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 26px;
+}
+.civic-impact-card.full-civic-impact .civic-badges-section {
+  width: 100%;
+  margin-top: 22px;
+}
+.civic-impact-card.full-civic-impact .civic-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.civic-impact-card.full-civic-impact .civic-badge-gallery {
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.civic-impact-card.full-civic-impact .civic-gallery-badge {
+  width: 100%;
+  min-width: 0;
+  min-height: 176px;
+  padding: 18px;
+  overflow-wrap: anywhere;
+}
+.civic-impact-card.full-civic-impact .civic-gallery-badge .civic-earned-badge-copy,
+.civic-impact-card.full-civic-impact .civic-gallery-badge .civic-earned-badge-copy small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Make the entire desktop sidebar scroll when its contents exceed viewport height. */
+.sidebar {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(160,198,219,.42) transparent;
+  box-sizing: border-box;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(160,198,219,.42); border-radius: 8px; }
+.sidebar nav {
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.sidebar > .btn { flex-shrink: 0; }
+.sidebar-bottom { flex: 0 0 auto; margin-top: 18px; }
+
+@media (max-width: 1000px) {
+  .civic-impact-card.full-civic-impact .civic-badge-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .civic-impact-page { padding: 22px 14px 80px; }
+  .civic-impact-card.full-civic-impact { padding: 16px; }
+  .civic-impact-card.full-civic-impact .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .civic-impact-card.full-civic-impact .civic-badge-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
+@media (max-width: 430px) {
+  .civic-impact-card.full-civic-impact .civic-badge-gallery { grid-template-columns: minmax(0, 1fr); }
+  .civic-impact-card.full-civic-impact .civic-gallery-badge { min-height: 0; }
+}
+
+/* V04: enforce real inset spacing on profile impact preview and its contents. */
+.profile-impact-preview {
+  padding: clamp(18px, 2.4vw, 30px) !important;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.profile-impact-preview > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.profile-impact-preview .card-title { padding: 0; margin: 0; gap: 16px; align-items: flex-start; }
+.profile-impact-preview .profile-current-badge { margin-top: 18px; padding: 20px; }
+.profile-impact-preview .profile-upcoming-heading { margin-top: 24px; }
+.profile-impact-preview .profile-upcoming-badges { margin-bottom: 2px; }
+.impact-title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; min-width:0; }
+.impact-title-row > .card-title { flex:1 1 auto; min-width:0; }
+.impact-language-toggle { flex:0 0 auto; border:1px solid var(--border); background:var(--surface); color:var(--primary); border-radius:9px; padding:8px 12px; font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
+.impact-language-toggle:hover { background:var(--surface-2); border-color:var(--primary); }
+.impact-points-total { flex:0 0 auto; white-space:nowrap; font-size:24px; font-weight:850; color:var(--primary); }
+.impact-points-total small { font-size:12px; color:var(--muted); }
+.impact-certificates-section { margin-top:28px; padding-top:22px; border-top:1px solid var(--border); min-width:0; }
+.impact-certificates-section > .civic-section-heading { margin-bottom:16px; }
+.citizen-certificate { position:relative; width:100%; max-width:100%; box-sizing:border-box; padding:12px; border-radius:16px; background:linear-gradient(135deg,#f9f4e8 0%,#fffdf7 45%,#f4ead0 100%); border:1px solid #c8a95c; box-shadow:0 10px 28px rgba(71,54,16,.09); color:#213e4c; overflow:hidden; }
+.certificate-inner-border { position:relative; border:2px solid #c6a657; outline:1px solid rgba(198,166,87,.5); outline-offset:4px; padding:clamp(18px,3vw,34px); text-align:center; min-width:0; }
+.certificate-inner-border:before,.certificate-inner-border:after { content:"✦"; position:absolute; color:#b28a2f; font-size:20px; top:8px; }
+.certificate-inner-border:before { left:10px; }.certificate-inner-border:after { right:10px; }
+.certificate-topline { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#315d72; font-size:10px; letter-spacing:2px; font-weight:900; }
+.certificate-emblem { color:#c49b3e; font-size:25px; }
+.certificate-kicker { margin-top:22px; color:#947020; font-size:10px; font-weight:900; letter-spacing:2.6px; }
+.certificate-inner-border h3 { margin:8px 0 12px; color:#153f55; font-family:Georgia,'Times New Roman',serif; font-size:clamp(23px,3.5vw,36px); font-weight:600; }
+.certificate-presented { margin:0; color:#5f6f70; font-size:13px; }
+.certificate-recipient { display:inline-block; max-width:100%; margin:10px auto 8px; padding:0 14px 7px; border-bottom:1px solid #b28a2f; color:#173f55; font-family:Georgia,'Times New Roman',serif; font-size:clamp(22px,3vw,31px); font-weight:700; overflow-wrap:anywhere; }
+.certificate-description { max-width:620px; margin:8px auto 18px; color:#586765; font-size:13px; line-height:1.65; }
+.certificate-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; max-width:640px; margin:0 auto 22px; }
+.certificate-metrics > div { display:flex; flex-direction:column; gap:5px; padding:10px 6px; border-left:1px solid rgba(178,138,47,.35); }
+.certificate-metrics > div:first-child { border-left:0; }
+.certificate-metrics b { color:#204e63; font-size:22px; }
+.certificate-metrics span { color:#6b7770; font-size:10px; }
+.certificate-footer { display:grid; grid-template-columns:1fr auto 1fr; align-items:end; gap:14px; margin-top:8px; }
+.certificate-footer > div { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.certificate-footer > div:first-child { text-align:left; }.certificate-footer > div:last-child { text-align:right; }
+.certificate-footer small { color:#667570; font-size:9px; }
+.certificate-signature { color:#1e5267; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:22px; font-weight:700; }
+.certificate-seal { width:62px; height:62px; border:2px double #b28a2f; border-radius:50%; display:flex; justify-content:center; align-items:center; text-align:center; font-size:12px; font-weight:900; color:#997328; transform:rotate(-8deg); }
+.certificate-seal small { font-size:7px; }
+.certificate-id { margin-top:18px; color:#8a8a7c; font-size:9px; letter-spacing:.6px; }
+.certificate-preview { opacity:.96; }
+.certificate-preview-stamp { display:inline-block; margin:0 auto 16px; padding:7px 12px; border:1px dashed #a66e54; color:#995f49; font-size:10px; font-weight:900; letter-spacing:1px; transform:rotate(-2deg); }
+.certificate-unlock-note { margin:10px 2px 0; color:var(--muted); font-size:12px; line-height:1.5; }
+.certificate-print-button { display:flex; align-items:center; gap:8px; margin:14px auto 2px; padding:10px 15px; border:0; border-radius:9px; background:#245d7c; color:#fff; font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
+.certificate-print-button:hover { background:#17445e; }
+@media(max-width:600px) { .impact-title-row { flex-wrap:wrap; }.impact-title-row > .card-title { flex-basis:100%; }.profile-impact-preview { padding:16px !important; }.profile-current-badge { flex-wrap:wrap; }.certificate-inner-border { padding:20px 12px; }.certificate-topline { letter-spacing:1px; font-size:8px; }.certificate-metrics { gap:4px; }.certificate-metrics span { font-size:9px; }.certificate-footer { gap:7px; }.certificate-seal { width:48px; height:48px; } }
+@media print {
+  body.printing-civix-certificate * { visibility:hidden !important; }
+  body.printing-civix-certificate .citizen-certificate,
+  body.printing-civix-certificate .citizen-certificate * { visibility:visible !important; }
+  body.printing-civix-certificate .citizen-certificate { position:absolute !important; left:0 !important; top:0 !important; width:100% !important; max-width:none !important; box-shadow:none !important; border:0 !important; padding:0 !important; background:#fffdf7 !important; }
+  body.printing-civix-certificate .certificate-print-button { display:none !important; }
+  body.printing-civix-certificate .certificate-inner-border { padding:30px !important; }
+  @page { size:A4 landscape; margin:12mm; }
+}
+
+
+/* WhatsApp opt-in and grievance POC v1 */
+.whatsapp-optin-card,.poc-assignment-card,.poc-display-card { margin:16px 0; }
+.whatsapp-choice-row { display:flex; flex-wrap:wrap; gap:12px 22px; margin:14px 0; }
+.whatsapp-choice-row label { display:flex; align-items:center; gap:8px; color:var(--text); font-size:13px; font-weight:600; }
+.whatsapp-number-field { display:flex; align-items:center; gap:10px; }
+.whatsapp-number-field>span { display:flex; align-items:center; justify-content:center; min-width:54px; height:46px; border:1px solid var(--border); border-radius:9px; background:var(--surface); }
+.whatsapp-number-field input { flex:1; min-width:0; }
+.whatsapp-consent { margin:12px 0 4px; }
+.demo-data-note { display:block; padding:9px 11px; margin:8px 0 12px; border:1px solid #f1d49b; border-radius:8px; background:#fff8e8; color:#855b12; font-size:12px; }
+.poc-assignment-card .field { margin:12px 0; }
+.poc-contact-details { display:flex; flex-direction:column; gap:6px; color:var(--text); font-size:13px; }
+.poc-contact-details b { font-size:16px; }
+.poc-contact-details span { color:var(--muted); }
+
+/* Layout hardening for POC assignment and citizen WhatsApp preferences */
+.ops-page .incident-grid { align-items:start; }
+.ops-page .incident-grid aside { align-self:start; min-width:0; }
+.ops-page .poc-assignment-card { position:static; height:auto; max-height:none; overflow:visible; }
+.ops-page .workflow-message { display:block; clear:both; margin:16px 0 0; overflow-wrap:anywhere; }
+.citizen-detail-whatsapp { min-width:0; }
+.citizen-detail-whatsapp .field { margin:12px 0; }
+.citizen-detail-whatsapp .consent { align-items:flex-start; }
 
 
 /* Emergency Response integration */

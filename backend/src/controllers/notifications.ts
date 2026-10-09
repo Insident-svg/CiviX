@@ -165,7 +165,7 @@ export async function read(
         read: true,
       },
       {
-        new: true,
+        returnDocument: 'after',
       },
     ).populate(
       'grievanceId',

@@ -82,6 +82,14 @@ const userSchema = new Schema(
       type: String,
     },
 
+    // Private WhatsApp destination and consent metadata. Grievance APIs only
+    // populate safe public user fields, so this number is not exposed to others.
+    whatsappNotifications: {
+      enabled: { type: Boolean, default: false },
+      phoneNumber: { type: String, trim: true, maxlength: 20 },
+      consentAt: { type: Date },
+    },
+
     blocked: {
       type: Boolean,
       default: false,
