@@ -230,6 +230,7 @@ function validateAIResponse(
 
   if (
     result.transcript !== undefined &&
+    result.transcript !== null &&
     typeof result.transcript !== 'string'
   ) {
     throw new Error('Invalid AI transcript');
