@@ -1288,7 +1288,7 @@ button.table-row:hover { background:var(--surface-2); }
 .profile-eagle-art {
   position:absolute;
   inset:-12px -18px -18px -18px;
-  background-image:url('/eagle-profile.webp');
+  background-image:var(--eagle-profile-image);
   background-size:cover;
   background-position:center 35%;
   background-repeat:no-repeat;

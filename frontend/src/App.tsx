@@ -9,6 +9,14 @@ import {
 } from "react";
 
 import civixLogoMark from "./imports/civix-logo-mark.svg";
+import defaultAvatar from "./assets/default-avatar.svg";
+import eagleProfile from "./assets/eagle-profile.webp";
+import cityGuardianBadge from "./assets/badges/city-guardian.jpeg";
+import communityHelperBadge from "./assets/badges/community-helper.jpeg";
+import firstFixBadge from "./assets/badges/first-fix.jpeg";
+import newbieBadge from "./assets/badges/newbie.jpeg";
+import potholeHunterBadge from "./assets/badges/pothole-hunter.jpeg";
+import steadyCitizenBadge from "./assets/badges/steady-citizen.jpeg";
 import EmergencyCenter from "./EmergencyCenter";
 
 import { api, setGlobalLoading, type Grievance, type User, type AIAnalysis } from "./services/api";
@@ -51,12 +59,12 @@ function loadGoogleIdentityScript(): Promise<void> {
 }
 
 const BADGE_IMAGE_BY_ID: Record<string, string> = {
-  newbie: "/badges/newbie.jpeg",
-  "first-fix": "/badges/first-fix.jpeg",
-  "pothole-hunter": "/badges/pothole-hunter.jpeg",
-  "five-fixes": "/badges/community-helper.jpeg",
-  "twenty-five-fixes": "/badges/city-guardian.jpeg",
-  "steady-citizen": "/badges/steady-citizen.jpeg",
+  newbie: newbieBadge,
+  "first-fix": firstFixBadge,
+  "pothole-hunter": potholeHunterBadge,
+  "five-fixes": communityHelperBadge,
+  "twenty-five-fixes": cityGuardianBadge,
+  "steady-citizen": steadyCitizenBadge,
 };
 
 function getBadgeImage(badge: any): string | undefined {
@@ -179,7 +187,7 @@ function Status({ children, tone = "blue" }: { children: ReactNode; tone?: "blue
 }
 
 function Avatar({ initials = "AK", small = false, src, useDefault = false }: { initials?: string; small?: boolean; src?: string | null; useDefault?: boolean }) {
-  const image = src || (useDefault ? "/default-avatar.svg" : "");
+  const image = src || (useDefault ? defaultAvatar : "");
   return <span className={`avatar ${small ? "avatar-small" : ""}`}>{image ? <img src={image} alt="Profile"/> : initials}</span>;
 }
 
@@ -1102,7 +1110,7 @@ function Profile({ go, user, onUser, impactOnly = false }: { go:(s:Screen)=>void
   const subtitle=isCitizen?"Your civic activity and submitted grievances.":role==="officer"?"Your government identity, department coverage and assigned work.":"Your system administration identity and live platform responsibility.";
   return <div className={`page narrow-page ${impactOnly ? "civic-impact-page" : ""}`}>
     {!impactOnly && <Card className={`profile-card role-profile ${role}`}>
-      <div className="profile-cover eagle-profile-cover" aria-hidden="true"><div className="profile-eagle-art"/><div className="profile-cover-shade"/></div>
+      <div className="profile-cover eagle-profile-cover" aria-hidden="true"><div className="profile-eagle-art" style={{"--eagle-profile-image": `url("${eagleProfile}")`} as React.CSSProperties}/><div className="profile-cover-shade"/></div>
       <div className="profile-main">
         <div className="profile-avatar-menu" ref={menuRef}>
           <button type="button" className="profile-avatar-trigger" onClick={()=>setPhotoMenu(x=>!x)} aria-label="Manage profile photo" aria-expanded={photoMenu} disabled={uploading}>
