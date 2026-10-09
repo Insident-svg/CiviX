@@ -1212,7 +1212,12 @@ export async function analyzePreview(req: AuthRequest, res: Response) {
     });
     return ok(res, ai);
   } catch (error) {
-    console.error('AI preview pipeline failed:', error);
+    console.error('AI preview pipeline failed:', {
+      message: error instanceof Error ? error.message : String(error),
+      cause: error instanceof Error && error.cause instanceof Error
+        ? error.cause.message
+        : undefined,
+    });
     throw new AppError(502, 'AI_SERVICE_UNAVAILABLE', 'AI analysis service is temporarily unavailable. Please try again.');
   }
 }

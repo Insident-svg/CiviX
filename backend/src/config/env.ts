@@ -16,7 +16,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1),
 
   AI_SERVICE_URL: z.string().url(),
-  AI_TIMEOUT_MS: z.coerce.number().int().positive().default(35000),
+  AI_TIMEOUT_MS: z.coerce.number().int().positive().default(120000),
   AI_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
   AI_CONFIDENCE_THRESHOLD: z.coerce.number().min(0).max(1).default(0.75),
 
