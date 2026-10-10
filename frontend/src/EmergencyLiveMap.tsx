@@ -55,10 +55,6 @@ export default function EmergencyLiveMap({ incidents, reports, resources, update
     resources: resources.filter((x: any) => coordsOf(x) && x.resourceType !== 'SHELTER_BED' && !/shelter|community hall/i.test(String(x.locationName || x.name || ''))).length,
     shelters: resources.filter((x: any) => coordsOf(x) && (x.resourceType === 'SHELTER_BED' || /shelter|community hall/i.test(String(x.locationName || x.name || '')))).length,
   }), [incidents, reports, resources]);
-  const activeIncidentCount = useMemo(
-    () => incidents.filter((x: any) => !['RESOLVED', 'CLOSED'].includes(String(x.status))).length,
-    [incidents],
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -116,11 +112,11 @@ export default function EmergencyLiveMap({ incidents, reports, resources, update
     <div className="section-heading emergency-live-map-heading"><div><span className="eyebrow">GEOSPATIAL SITUATIONAL AWARENESS</span><h2>Live emergency map</h2><p>Explore reported hazards, active incidents, available resources, and shelter capacity.</p></div><div className="emergency-map-actions"><span className="emergency-map-live"><span className="live-dot"/> Auto-refresh · 30 sec</span><button type="button" className="btn btn-secondary" onClick={() => { setFitRequested(true); onRefresh(); }} disabled={refreshing}>{refreshing ? 'Refreshing…' : 'Refresh map'}</button></div></div>
     {pickingLocation&&<div className="emergency-map-picking-banner" role="status">Click anywhere on the map to select the location. Clicking the map sets coordinates.</div>}
     <div className="emergency-map-toolbar">
-      {([['incidents','Incidents','#b91c1c',activeIncidentCount],['reports','Citizen reports','#f97316',mappedCounts.reports],['resources','Resources','#2563eb',mappedCounts.resources],['shelters','Shelters','#15803d',mappedCounts.shelters]] as [LayerKey,string,string,number][]).map(([key,label,color,count]) => <button key={key} type="button" className={`emergency-map-filter ${layers[key] ? 'is-on' : ''}`} onClick={() => toggleLayer(key)} aria-pressed={layers[key]}><span style={{ backgroundColor: color }} />{label}<b>{count}</b></button>)}
+      {([['incidents','Incidents','#b91c1c',mappedCounts.incidents],['reports','Citizen reports','#f97316',mappedCounts.reports],['resources','Resources','#2563eb',mappedCounts.resources],['shelters','Shelters','#15803d',mappedCounts.shelters]] as [LayerKey,string,string,number][]).map(([key,label,color,count]) => <button key={key} type="button" className={`emergency-map-filter ${layers[key] ? 'is-on' : ''}`} onClick={() => toggleLayer(key)} aria-pressed={layers[key]}><span style={{ backgroundColor: color }} />{label}<b>{count}</b></button>)}
       <button type="button" className="emergency-map-fit" onClick={() => setFitRequested(true)}>Fit visible markers</button>
     </div>
     <div className="emergency-live-map-wrap"><div ref={hostRef} className="emergency-live-map-host"/>{mapError && <div className="map-empty">{mapError}. Check your internet connection.</div>}</div>
-    <div className="emergency-map-footer"><span>{mappedCounts.incidents + mappedCounts.reports + mappedCounts.resources + mappedCounts.shelters} mapped records with coordinates{activeIncidentCount > mappedCounts.incidents ? ` · ${activeIncidentCount - mappedCounts.incidents} active incident(s) need a location` : ''}</span><span>{updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : 'Waiting for first data refresh'}</span></div>
+    <div className="emergency-map-footer"><span>{mappedCounts.incidents + mappedCounts.reports + mappedCounts.resources + mappedCounts.shelters} mapped records with coordinates</span><span>{updatedAt ? `Updated ${updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : 'Waiting for first data refresh'}</span></div>
     <p className="emergency-map-disclaimer">Only records with saved coordinates appear as map markers. A shelter/resource with no coordinates remains visible in inventory but is not assigned an invented location. Demo markers are labelled as simulation data in the incident/report lists.</p>
   </section>;
 }
