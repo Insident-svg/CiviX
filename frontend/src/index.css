@@ -739,7 +739,7 @@ button.table-row:hover { background:var(--surface-2); }
   .mobile-logo .logo b { font-size:20px; }
   .top-actions .user-chip { display:none; }
   .mobile-logout { display:flex; }
-  .bottom-nav { position:fixed; z-index:40; left:0; right:0; bottom:0; height:68px; padding:6px 8px 5px; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); background:var(--surface); border-top:1px solid var(--border); }
+  .bottom-nav { position:fixed; z-index:40; left:0; right:0; bottom:0; height:68px; padding:6px 8px 5px; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); background:var(--surface); border-top:1px solid var(--border); }
   .bottom-nav button { border:0; background:transparent; color:var(--muted); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .bottom-nav small { font-size:10px; font-weight:700; }
   .bottom-nav button.active { color:var(--primary); }
