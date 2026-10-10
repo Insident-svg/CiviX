@@ -77,8 +77,8 @@ export async function getGamificationProfile(userId: string) {
   const levelIndex = LEVELS.reduce((idx, level, i) => resolvedReports >= level.minResolved ? i : idx, 0);
   const badges = BADGES.map(badge => {
     const categoryCounts: Record<string, number> = { road: roadReports, 'street light': lightReports, sanitation: sanitationReports, water: waterReports };
-    const earned = badge.kind === 'starter' ? resolvedReports === 0 : badge.kind === 'streak' ? streak.longest >= 3 : badge.kind === 'reports' ? submittedReports >= badge.threshold : badge.kind === 'resolution-evidence' ? events.length >= badge.threshold : badge.category ? (categoryCounts[badge.category] ?? 0) >= badge.threshold : resolvedReports >= badge.threshold;
-    return { ...badge, earned, earnedAt: earned ? (events[events.length - 1]?.awardedAt ?? null) : null };
+    const earned = badge.kind === 'starter' ? true : badge.kind === 'streak' ? streak.longest >= 3 : badge.kind === 'reports' ? submittedReports >= badge.threshold : badge.kind === 'resolution-evidence' ? events.length >= badge.threshold : badge.category ? (categoryCounts[badge.category] ?? 0) >= badge.threshold : resolvedReports >= badge.threshold;
+    return { ...badge, earned, earnedAt: earned ? (badge.kind === 'starter' ? (events[0]?.awardedAt ?? null) : (events[events.length - 1]?.awardedAt ?? null)) : null };
   });
   return {
     user: { id: String(userId), name: user.name, username: user.username },
