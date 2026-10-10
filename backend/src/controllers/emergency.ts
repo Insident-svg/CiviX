@@ -47,7 +47,35 @@ export async function overview(req: AuthRequest, res: Response) {
   citizen ? Promise.resolve([]) : EmergencyAllocationPlan.find({}).sort({ createdAt: -1 }).limit(20).lean(),
   citizen ? Promise.resolve([]) : EmergencyRelief.find({}).sort({ createdAt: -1 }).limit(100).lean(),
  ]);
- const active = incidents.filter((i: any) => !['RESOLVED','CLOSED'].includes(i.status));
+  const incidentLocations = new Map<string, [number, number]>();
+  for (const incident of incidents as any[]) {
+   const coordinates = incident.location?.coordinates;
+   if (Array.isArray(coordinates) && coordinates.length === 2) incidentLocations.set(String(incident._id), coordinates as [number, number]);
+  }
+  for (const report of reports as any[]) {
+   const coordinates = report.location?.coordinates;
+   if ((!Array.isArray(coordinates) || coordinates.length !== 2) && report.incidentId) {
+    const incidentCoordinates = incidentLocations.get(String(report.incidentId));
+    if (incidentCoordinates) report.location = { type: 'Point', coordinates: incidentCoordinates };
+   }
+  }
+  for (const incident of incidents as any[]) {
+   if (incident.location?.coordinates?.length) continue;
+   const linkedCoordinates = (reports as any[])
+     .filter(report => String(report.incidentId || '') === String(incident._id))
+     .map(report => report.location?.coordinates)
+     .filter((coordinates: unknown) => Array.isArray(coordinates) && coordinates.length === 2) as [number, number][];
+   if (linkedCoordinates.length) {
+    incident.location = {
+     type: 'Point',
+     coordinates: [
+      linkedCoordinates.reduce((sum, coordinates) => sum + coordinates[0], 0) / linkedCoordinates.length,
+      linkedCoordinates.reduce((sum, coordinates) => sum + coordinates[1], 0) / linkedCoordinates.length,
+     ],
+    };
+   }
+  }
+  const active = incidents.filter((i: any) => !['RESOLVED','CLOSED'].includes(i.status));
  const activeAssignments = assignments.filter((a: any) => !['COMPLETED','CANCELLED'].includes(a.status));
  return ok(res, { incidents, reports, resources, assignments, plans, relief, metrics: {
   activeIncidents: active.length, incomingReports: reports.filter((r: any) => ['RECEIVED','REVIEW_REQUIRED'].includes(r.status)).length,

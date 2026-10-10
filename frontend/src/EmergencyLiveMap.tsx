@@ -33,9 +33,10 @@ function loadLeaflet() {
 }
 const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 const coordsOf = (item: any) => {
-  const coordinates = item?.location?.coordinates;
-  if (!Array.isArray(coordinates) || coordinates.length !== 2) return null;
-  const [lng, lat] = coordinates.map(Number);
+  const coordinates = item?.location?.coordinates || item?.coordinates;
+  const [lngValue, latValue] = Array.isArray(coordinates) ? coordinates : [item?.longitude ?? item?.lng, item?.latitude ?? item?.lat];
+  const lng = Number(lngValue);
+  const lat = Number(latValue);
   return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 ? { lat, lng } : null;
 };
 
