@@ -365,7 +365,7 @@ function Sidebar({ role, actualRole, screen, go, onLogout, onWorkspace }: { role
 }
 
 function BottomNav({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
-  const items = [citizenNav[0], citizenNav[1], { label: "Report", icon: "report", screen: "report" as Screen }, citizenNav[4], citizenNav[5], { label: "Emergency", icon: "shield", screen: "emergency" as Screen }];
+  const items = [citizenNav[0], citizenNav[1], { label: "Report", icon: "report", screen: "report" as Screen }, citizenNav[4], citizenNav[5]];
   return <nav className="bottom-nav">{items.map(x => <button key={x.label} onClick={() => go(x.screen)} className={`${screen === x.screen ? "active" : ""} ${x.label === "Report" ? "report-nav" : ""} ${x.screen === "emergency" ? "emergency-bottom-nav" : ""}`}><span><Icon name={x.icon}/></span><small>{x.label}</small></button>)}</nav>;
 }
 
